@@ -70,7 +70,7 @@ int FileNode::getFileHandler(const std::string& nodeName) {
     std::string fullPath = mNodePath + nodeName;
     int fd = open(fullPath.c_str(), O_WRONLY, 0);
     if (fd < 0) {
-        ALOGE("Open file node %s failed, fd = %d", fullPath.c_str(), fd);
+        //ALOGE("Open file node %s failed, fd = %d", fullPath.c_str(), fd);
         return fd;
     }
     mFds[nodeName] = fd;
@@ -80,13 +80,13 @@ int FileNode::getFileHandler(const std::string& nodeName) {
 bool FileNode::writeString(const std::string& nodeName, const std::string& str) {
     int fd = getFileHandler(nodeName);
     if (fd < 0) {
-        ALOGE("Write to invalid file node %s%s", mNodePath.c_str(), nodeName.c_str());
+        //ALOGE("Write to invalid file node %s%s", mNodePath.c_str(), nodeName.c_str());
         return false;
     }
     int ret = write(fd, str.c_str(), str.size());
     if (ret < 0) {
-        ALOGE("Write %s to file node %s%s failed, ret = %d errno = %d", str.c_str(),
-              mNodePath.c_str(), nodeName.c_str(), ret, errno);
+        // ALOGE("Write %s to file node %s%s failed, ret = %d errno = %d", str.c_str(),
+        //       mNodePath.c_str(), nodeName.c_str(), ret, errno);
         return false;
     }
     std::ostringstream oss;

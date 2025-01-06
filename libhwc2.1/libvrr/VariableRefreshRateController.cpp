@@ -230,14 +230,14 @@ int VariableRefreshRateController::notifyExpectedPresent(int64_t timestamp,
     } else {
         if (!mFileNode->writeValue("expected_present_time_ns", timestamp)) {
             std::string displayFileNodePath = mDisplay->getPanelSysfsPath();
-            ALOGE("%s(): write command to file node %s%s failed.", __func__,
-                  displayFileNodePath.c_str(), "expect_present_time");
+            // ALOGE("%s(): write command to file node %s%s failed.", __func__,
+            //       displayFileNodePath.c_str(), "expect_present_time");
         }
 
         if (!mFileNode->writeValue("frame_interval_ns", frameIntervalNs)) {
             std::string displayFileNodePath = mDisplay->getPanelSysfsPath();
-            ALOGE("%s(): write command to file node %s%s failed.", __func__,
-                  displayFileNodePath.c_str(), "frame_interval");
+            // ALOGE("%s(): write command to file node %s%s failed.", __func__,
+            //       displayFileNodePath.c_str(), "frame_interval");
         }
     }
 

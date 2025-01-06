@@ -163,17 +163,17 @@ ExynosPrimaryDisplay::ExynosPrimaryDisplay(uint32_t index, ExynosDevice* device,
                 char* endPos;
                 pos = pattern.find(':');
                 if (pos == std::string::npos) {
-                    ALOGE("%s(): cannot find the delimiter ':' of the pattern {brightness}:{fps} "
-                          "in "
-                          "pattern = %s",
-                          __func__, pattern.c_str());
+                    // ALOGE("%s(): cannot find the delimiter ':' of the pattern {brightness}:{fps} "
+                    //       "in "
+                    //       "pattern = %s",
+                    //       __func__, pattern.c_str());
                     break;
                 } else {
                     brightnessString = pattern.substr(0, pos);
                     pattern.erase(0, pos + 1);
                     if (pattern.empty()) {
-                        ALOGE("%s(): miss the {fps} of the pattern = %s", __func__,
-                              pattern.c_str());
+                        // ALOGE("%s(): miss the {fps} of the pattern = %s", __func__,
+                        //       pattern.c_str());
                         break;
                     } else {
                         fpsString = pattern;
@@ -225,8 +225,8 @@ ExynosPrimaryDisplay::ExynosPrimaryDisplay(uint32_t index, ExynosDevice* device,
 
         std::string displayFileNodePath = getPanelSysfsPath();
         if (displayFileNodePath.empty()) {
-            ALOGE("%s(): cannot find file node %s of display %s", __func__,
-                  displayFileNodePath.c_str(), mDisplayName.c_str());
+            // ALOGE("%s(): cannot find file node %s of display %s", __func__,
+            //       displayFileNodePath.c_str(), mDisplayName.c_str());
         } else {
             auto& fileNodeManager =
                     android::hardware::graphics::composer::FileNodeManager::getInstance();
@@ -237,8 +237,8 @@ ExynosPrimaryDisplay::ExynosPrimaryDisplay(uint32_t index, ExynosDevice* device,
                                           kRefreshControlNodeEnabled))) {
                 bool ret = fileNode->writeValue(kRefreshControlNodeName, refreshControlCommand);
                 if (!ret) {
-                    ALOGE("%s(): write command to file node %s%s failed.", __func__,
-                          displayFileNodePath.c_str(), kRefreshControlNodeName.c_str());
+                    // ALOGE("%s(): write command to file node %s%s failed.", __func__,
+                    //       displayFileNodePath.c_str(), kRefreshControlNodeName.c_str());
                 }
             } else {
                 ALOGI("%s(): refresh control is not supported", __func__);
@@ -282,7 +282,7 @@ ExynosPrimaryDisplay::ExynosPrimaryDisplay(uint32_t index, ExynosDevice* device,
     }
     mEarlyWakeupDispFd = fopen(earlyWakeupNodeBase, "w");
     if (mEarlyWakeupDispFd == nullptr)
-        ALOGE("open %s failed! %s", earlyWakeupNodeBase, strerror(errno));
+        // ALOGE("open %s failed! %s", earlyWakeupNodeBase, strerror(errno));
     mBrightnessController = std::make_unique<BrightnessController>(
             mIndex, [this]() { mDevice->onRefresh(mDisplayId); },
             [this]() { updatePresentColorConversionInfo(); });
@@ -452,18 +452,18 @@ int32_t ExynosPrimaryDisplay::getPreferredDisplayConfigInternal(int32_t *outConf
             return HWC2_ERROR_BAD_CONFIG;
         }
         if (lookupDisplayConfigs(width, height, fps, fps, outConfig) != HWC2_ERROR_NONE) {
-            ALOGE("%s: kernel doesn't support mode: %s", __func__, modeStr);
+            // ALOGE("%s: kernel doesn't support mode: %s", __func__, modeStr);
             return HWC2_ERROR_BAD_CONFIG;
         }
         ret = setBootDisplayConfig(*outConfig);
         if (ret == HWC2_ERROR_NONE)
             ALOGI("%s: succeeded to replace %s with new format", __func__, modeStr);
         else
-            ALOGE("%s: failed to replace %s with new format", __func__, modeStr);
+            // ALOGE("%s: failed to replace %s with new format", __func__, modeStr);
         return ret;
     }
     if (!fps || !vsyncRate || (fps > vsyncRate)) {
-        ALOGE("%s: bad boot config: %s", __func__, modeStr);
+        // ALOGE("%s: bad boot config: %s", __func__, modeStr);
         return HWC2_ERROR_BAD_CONFIG;
     }
     return lookupDisplayConfigs(width, height, fps, vsyncRate, outConfig);
@@ -614,7 +614,7 @@ int32_t ExynosPrimaryDisplay::setPowerMode(int32_t mode) {
                       poweredOffPrimaryDisplay->mDisplayTraceName.c_str());
                 external_display_intf->swapCrtcs(poweredOffPrimaryDisplay);
             } else {
-                ALOGE("Could not find a powered off primary display!");
+                // ALOGE("Could not find a powered off primary display!");
             }
             external_display->mActiveConfig = 0;
             external_display->setActiveConfig(activeConfig);
@@ -716,7 +716,7 @@ void ExynosPrimaryDisplay::initDisplayInterface(uint32_t interfaceType)
 
 std::string ExynosPrimaryDisplay::getPanelSysfsPath(const DisplayType& type) const {
     if ((type < DisplayType::DISPLAY_PRIMARY) || (type >= DisplayType::DISPLAY_MAX)) {
-        ALOGE("Invalid display panel type %d", type);
+        // ALOGE("Invalid display panel type %d", type);
         return {};
     }
 
@@ -790,7 +790,7 @@ int32_t ExynosPrimaryDisplay::SetCurrentPanelGammaSource(const DisplayType type,
 
     std::ofstream ofs(gamma_node);
     if (!ofs.is_open()) {
-        ALOGW("Unable to open gamma node '%s', error = %s", gamma_node.c_str(), strerror(errno));
+        // ALOGW("Unable to open gamma node '%s', error = %s", gamma_node.c_str(), strerror(errno));
         return HWC2_ERROR_UNSUPPORTED;
     }
     ofs.write(gamma_data.c_str(), gamma_data.size());
@@ -833,7 +833,7 @@ int32_t ExynosPrimaryDisplay::getDisplayConfigs(uint32_t* outNumConfigs,
                 std::unordered_map<hwc2_config_t, VrrConfig_t> vrrConfigs;
                 for (const auto& it : mDisplayConfigs) {
                     if (!it.second.vrrConfig.has_value()) {
-                        ALOGE("Both pseudo and full VRR modes should include VRR configurations.");
+                        // ALOGE("Both pseudo and full VRR modes should include VRR configurations.");
                         return HWC2_ERROR_BAD_CONFIG;
                     }
                     vrrConfigs[it.first] = it.second.vrrConfig.value();
@@ -1218,7 +1218,7 @@ int32_t ExynosPrimaryDisplay::getDisplayIdleTimerEnabled(bool &enabled) {
     const std::string path = getPanelSysfsPath() + "panel_idle";
     std::ifstream ifs(path);
     if (!ifs.is_open()) {
-        ALOGW("%s() unable to open node '%s', error = %s", __func__, path.c_str(), strerror(errno));
+        // ALOGW("%s() unable to open node '%s', error = %s", __func__, path.c_str(), strerror(errno));
         return errno;
     } else {
         std::string panel_idle;
@@ -1234,7 +1234,7 @@ int32_t ExynosPrimaryDisplay::setDisplayIdleTimerEnabled(const bool enabled) {
     const std::string path = getPanelSysfsPath() + "panel_idle";
     std::ofstream ofs(path);
     if (!ofs.is_open()) {
-        ALOGW("%s() unable to open node '%s', error = %s", __func__, path.c_str(), strerror(errno));
+        // ALOGW("%s() unable to open node '%s', error = %s", __func__, path.c_str(), strerror(errno));
         return errno;
     } else {
         ofs << enabled;
@@ -1756,7 +1756,7 @@ const std::string& ExynosPrimaryDisplay::getPanelName() {
     if (!sysfs.empty()) {
         std::string sysfs_rel("panel_name");
         if (readLineFromFile(sysfs + "/" + sysfs_rel, mPanelName, '\n') != OK) {
-            ALOGE("failed reading %s/%s", sysfs.c_str(), sysfs_rel.c_str());
+            // ALOGE("failed reading %s/%s", sysfs.c_str(), sysfs_rel.c_str());
         }
     }
     return mPanelName;
@@ -1801,7 +1801,7 @@ int32_t ExynosPrimaryDisplay::getDisplayTemperature() {
     DISPLAY_ATRACE_CALL();
 
     if (mDisplayTempSysfsNode.empty()) {
-        ALOGE("%s: Display temp sysfs node string is empty", __func__);
+        // ALOGE("%s: Display temp sysfs node string is empty", __func__);
         return UINT_MAX;
     }
 
@@ -1809,14 +1809,14 @@ int32_t ExynosPrimaryDisplay::getDisplayTemperature() {
     std::ifstream ifs(mDisplayTempSysfsNode.c_str());
 
     if (!ifs.is_open()) {
-        ALOGE("%s: Unable to open node '%s', error = %s", __func__, mDisplayTempSysfsNode.c_str(),
-              strerror(errno));
+        // ALOGE("%s: Unable to open node '%s', error = %s", __func__, mDisplayTempSysfsNode.c_str(),
+        //       strerror(errno));
         return UINT_MAX;
     }
 
     if (!(ifs >> temperature) || !ifs.good()) {
-        ALOGE("%s: Unable to read node '%s', error = %s", __func__, mDisplayTempSysfsNode.c_str(),
-              strerror(errno));
+        // ALOGE("%s: Unable to read node '%s', error = %s", __func__, mDisplayTempSysfsNode.c_str(),
+        //       strerror(errno));
     }
 
     ifs.close();
@@ -1869,7 +1869,7 @@ void* ExynosPrimaryDisplay::temperatureMonitorThreadLoop() {
 
         mDisplayTemperature = getDisplayTemperature();
         if (mDisplayTemperature == UINT_MAX) {
-            ALOGE("%s: Failed to get display temperature", LOG_TAG);
+            // ALOGE("%s: Failed to get display temperature", LOG_TAG);
         } else {
             ALOGI("Display Temperature : %d°C", mDisplayTemperature);
         }
